@@ -56,3 +56,22 @@ JOIN raw.products
 GROUP BY products.product_category_name
 ORDER BY total_sales DESC
 LIMIT 10;
+
+-- 9. Basket size: how many orders have 1, 2, 3... items?
+SELECT items_in_order, COUNT(*) AS number_of_orders
+FROM (
+  SELECT order_id, COUNT(*) AS items_in_order
+  FROM raw.order_items
+  GROUP BY order_id
+) AS order_sizes
+GROUP BY items_in_order
+ORDER BY items_in_order;
+
+-- 10. Total sales per seller state
+SELECT sellers.seller_state, SUM(order_items.price) AS total_sales
+FROM raw.order_items
+JOIN raw.sellers
+  ON order_items.seller_id = sellers.seller_id
+GROUP BY sellers.seller_state
+ORDER BY total_sales DESC
+LIMIT 10;
