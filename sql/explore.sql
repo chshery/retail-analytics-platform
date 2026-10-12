@@ -75,3 +75,11 @@ JOIN raw.sellers
 GROUP BY sellers.seller_state
 ORDER BY total_sales DESC
 LIMIT 10;
+-- 11. Orders with no items (anti-join)
+SELECT o.order_status, COUNT(*)
+FROM raw.orders o
+LEFT JOIN raw.order_items oi
+  ON o.order_id = oi.order_id
+WHERE oi.order_id IS NULL
+GROUP BY o.order_status
+ORDER BY COUNT(*) DESC;
