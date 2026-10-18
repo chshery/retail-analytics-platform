@@ -79,3 +79,33 @@
 | year_month | text | Year and month as `YYYY-MM`, used for time charts. | Added later with ALTER TABLE and UPDATE | Public |
 
 **Known issues:** the range only covers 2016 to 2018, which matches the orders data. Orders outside it would not find a matching date.
+
+## clean.fact_order_items
+
+**Purpose:** the central fact table of the star schema. It holds the measurable numbers (price, freight) and dates for every item sold, and links to all four dimensions.
+**Grain:** one row per item in an order. If someone buys 3 units of the same product, that is 3 rows, because the source has no quantity column.
+**Primary key:** (`order_id`, `order_item_id`)
+**Foreign keys:** `product_id` to `dim_product`, `seller_id` to `dim_seller`, `customer_id` to `dim_customer`, `purchase_date` to `dim_date`
+**Source:** `raw.order_items` joined to `raw.orders` on `order_id`
+**Row count:** 112,650
+
+| Column | Type | Description | Source and transformation | Classification |
+|---|---|---|---|---|
+| order_id | text | Identifier of the order this item belongs to. | raw.order_items.order_id, unchanged | Internal |
+| order_item_id | bigint | Position of the item within its order (1, 2, 3...). Together with `order_id` it identifies one row. | raw.order_items.order_item_id, unchanged | Internal |
+| product_id | text | The product sold. | raw.order_items.product_id, unchanged | Internal |
+| seller_id | text | The seller who sold the item. | raw.order_items.seller_id, unchanged | Internal |
+| customer_id | text | The customer record for this order. Links to `dim_customer`. Use `customer_unique_id` there to count people. | raw.orders.customer_id, via the join | Confidential |
+| order_status | text | Order status, such as delivered, shipped or canceled. | raw.orders.order_status, unchanged | Internal |
+| purchased_at | timestamp | When the order was placed. | raw.orders.order_purchase_timestamp, cast to timestamp | Internal |
+| delivered_at | timestamp | When the customer received the order. NULL if not yet delivered. | raw.orders.order_delivered_customer_date, cast to timestamp | Internal |
+| estimated_delivery_at | timestamp | The delivery date promised to the customer. | raw.orders.order_estimated_delivery_date, cast to timestamp | Internal |
+| price | numeric | Price of the item in Brazilian reais, excluding freight. | raw.order_items.price, rounded to 2 decimals as an exact number | Internal |
+| freight_value | numeric | Shipping cost allocated to the item, in Brazilian reais. | raw.order_items.freight_value, rounded to 2 decimals as an exact number | Internal |
+| purchase_date | date | The date part of `purchased_at`. Joins to `dim_date`. | Added later with ALTER TABLE: purchased_at cast to date | Internal |
+
+**Known issues:**
+- 8 orders are marked "delivered" but have no delivery date.
+- 775 orders in the raw data have no items, so they do not appear in this table (mostly unavailable or canceled).
+- There is no quantity column, so row counts are units, not distinct products.
+- A late delivery is defined by comparing dates only (`delivered_at` after `estimated_delivery_at`), ignoring the time of day.
