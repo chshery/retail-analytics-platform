@@ -58,3 +58,24 @@
 - 610 products (about 1.9%) have no category in the source and are labelled `unknown`.
 - 13 products had categories missing from the translation table and were mapped manually.
 - `weight_g` has 2 missing values.
+
+## clean.dim_date
+
+**Purpose:** a calendar table with one row per day, used to group sales by month, quarter, year or weekday.
+**Grain:** one row per calendar date.
+**Primary key:** `date_key`
+**Source:** generated in SQL with `generate_series`, not loaded from the raw data.
+**Row count:** 1,096 (1 Jan 2016 to 31 Dec 2018)
+
+| Column | Type | Description | Source and transformation | Classification |
+|---|---|---|---|---|
+| date_key | date | The calendar date. Joins to `fact_order_items.purchase_date`. | Generated | Public |
+| year | integer | Calendar year. | EXTRACT from date_key | Public |
+| quarter | integer | Calendar quarter, 1 to 4. | EXTRACT from date_key | Public |
+| month | integer | Month number, 1 to 12. | EXTRACT from date_key | Public |
+| month_name | text | Month name, for example "March". | TO_CHAR, trimmed | Public |
+| weekday_number | integer | ISO weekday, 1 (Monday) to 7 (Sunday). | EXTRACT ISODOW from date_key | Public |
+| weekday_name | text | Weekday name, for example "Monday". | TO_CHAR, trimmed | Public |
+| year_month | text | Year and month as `YYYY-MM`, used for time charts. | Added later with ALTER TABLE and UPDATE | Public |
+
+**Known issues:** the range only covers 2016 to 2018, which matches the orders data. Orders outside it would not find a matching date.
