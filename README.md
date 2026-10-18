@@ -29,6 +29,7 @@ raw CSVs → `raw` schema → `clean` schema (star schema) → Power BI
 | How big are baskets? | 96.7% of orders contain a single item. | Try bundles or "customers also bought" suggestions. |
 | Where are sellers concentrated? | About 64% of seller sales come from São Paulo state. | Recruit sellers in other regions to reduce dependence on one area. |
 | Which categories lose most to shipping? | Freight adds 16.6% to item prices on average, but 29.1% for electronics (about 1.75 times the average). Cheap items (electronics, food, telephony) pay a high share because prices are low; bulky furniture pays the most per delivery (about R$40 for office furniture). | Use free-shipping thresholds or bundles for cheap items; place sellers or stock closer to customers for bulky items. |
+| Which categories bring customers back? | Only 3.1% of customers place a second order. Among categories, home appliances (10.7%), fashion bags & accessories (9.0%) and furniture decor (7.3%) have the highest share of returning customers. Category rates are biased upward, so they're compared with each other, not with the overall rate. | Use these categories for first-purchase offers and follow-up emails, and test whether that raises repeat buying. |
 
 **Note:** these are insights from a public 2016-2018 dataset. They show strong associations, not proven causes, and the money estimates are illustrative.
 ## Data quality issues found
