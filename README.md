@@ -20,6 +20,16 @@ raw CSVs → `raw` schema → `clean` schema (star schema) → Power BI
 - Only about 3% of orders come from repeat customers.
 - Health & beauty is the top-selling category (about 1.26M BRL).
 
+## Business insights
+
+| Question | Finding | Recommendation |
+|---|---|---|
+| Do late deliveries hurt customer satisfaction? | Late orders average 2.27 stars vs 4.29 for on-time orders. 62.4% of late orders get a 1-2 star review, vs 9.3% of on-time orders. Late orders are about 7% of deliveries but produce about a third of all bad reviews. | Improve delivery estimates and carrier performance. If late orders were reviewed like on-time ones, there would be roughly 3,400 fewer bad reviews (illustrative estimate). |
+| How often do customers return? | Only about 3% of orders come from repeat customers. | Test loyalty or re-engagement offers. |
+| How big are baskets? | 96.7% of orders contain a single item. | Try bundles or "customers also bought" suggestions. |
+| Where are sellers concentrated? | About 64% of seller sales come from São Paulo state. | Recruit sellers in other regions to reduce dependence on one area. |
+
+**Note:** these are insights from a public 2016-2018 dataset. They show strong associations, not proven causes, and the money estimates are illustrative.
 ## Data quality issues found
 - 8 orders marked "delivered" have no delivery date.
 - 775 orders have no items (mostly unavailable or canceled).
