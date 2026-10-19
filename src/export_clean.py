@@ -25,5 +25,5 @@ tables = ["dim_customer", "dim_seller", "dim_product", "dim_date", "fact_order_i
 
 for table in tables:
     df = pd.read_sql(f"SELECT * FROM clean.{table}", engine)
-    df.to_csv(out_dir / f"{table}.csv", index=False)
+    df.to_csv(out_dir / f"{table}.csv", index=False, date_format="%Y-%m-%d %H:%M:%S")
     print(f"Exported {table}: {len(df)} rows")
