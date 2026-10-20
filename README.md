@@ -3,10 +3,17 @@
 An end-to-end analytics project on the Olist Brazilian e-commerce dataset (about 100k orders, 2016-2018): raw CSVs → Python loader → PostgreSQL → star schema → Power BI dashboard.
 
 ## Tools
-Python (pandas, SQLAlchemy), PostgreSQL, SQL, Power BI, Git
+Python (pandas, SQLAlchemy), PostgreSQL, Google BigQuery, SQL, Power BI (DAX, Power Query), Excel, Git
 
 ## Architecture
-raw CSVs → `raw` schema → `clean` schema (star schema) → Power BI
+raw CSVs → `raw` schema (PostgreSQL) → `clean` schema (star schema) → Power BI
+
+The clean star schema is also loaded into **Google BigQuery** (`olist_clean` dataset). The tables are exported with `src/export_clean.py`, loaded with explicit schemas, and all 249,000+ rows were checked against PostgreSQL.
+
+**Star schema:** `fact_order_items` (112,650 rows) with `dim_customer`, `dim_product`, `dim_seller` and `dim_date`.
+
+**Star schema:** `fact_order_items` (112,650 rows) with `dim_customer`, `dim_product`, `dim_seller` and `dim_date`.
+The clean tables are exported with `src/export_clean.py` and loaded into BigQuery with explicit schemas, and all 249,000+ rows were checked against PostgreSQL.
 
 **Star schema:** `fact_order_items` (112,650 rows) with `dim_customer`, `dim_product`, `dim_seller` and `dim_date`.
 
@@ -43,6 +50,10 @@ See `docs/data_quality_log.md` for details.
 
 ## Project status
 - [x] Raw load, clean layer, star schema, integrity checks
-- [x] Power BI dashboard v1
-- [ ] Data dictionary, lineage and governance documentation
+- [x] Power BI dashboard with DAX measures (sales, AOV, late delivery %, YoY)
+- [x] Data dictionary for all five clean tables (`docs/data_dictionary.md`)
+- [x] Data quality log (`docs/data_quality_log.md`)
+- [x] SQL analysis: window functions and business insights (`sql/`)
+- [x] Star schema migrated to Google BigQuery
+- [ ] Lineage diagram
 - [ ] Natural language to SQL assistant
