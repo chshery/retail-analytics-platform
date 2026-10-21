@@ -57,6 +57,7 @@ Rules:
 - All money is in Brazilian reals (R$), not dollars.
 - To count customers, use COUNT(DISTINCT customer_unique_id) from clean.dim_customer, not customer_id.
 - Orders are counted with COUNT(DISTINCT order_id).
+- "State" is ambiguous: dim_customer.state is where buyers live, dim_seller.state is where sellers are based. If the question doesn't say which, use customer state.
 
 Question: {question}"""
     response = client.models.generate_content(model=MODEL, contents=prompt)
@@ -75,13 +76,17 @@ def is_safe(sql):
 
 
 # 4b. Explain the result in plain English
-def explain(question, result):
+def explain(question, result, sql=""):
     prompt = f"""A manager asked: {question}
+This SQL was used:
+{sql}
 Here is the result from the database:
 {result.head(20).to_string(index=False)}
-Money is in Brazilian reals (R$). Note that 2016 only has data from September and 2018 only up to August, so they are partial years.
+
 Explain the answer in 2-3 short, plain-English sentences for a non-technical manager.
-Use the actual numbers. Do not mention SQL."""
+Use the actual numbers. Money is in Brazilian reals (R$). Note that 2016 only has data from September and 2018 only up to August, so they are partial years.
+If the SQL made an assumption (for example customer state vs seller state, or which years were included), say it clearly in one sentence.
+Do not mention SQL."""
     response = client.models.generate_content(model=MODEL, contents=prompt)
     return response.text.strip()
 
