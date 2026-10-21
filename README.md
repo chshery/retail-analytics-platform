@@ -39,6 +39,24 @@ The clean tables are exported with `src/export_clean.py` and loaded into BigQuer
 | Which categories bring customers back? | Only 3.1% of customers place a second order. Among categories, home appliances (10.7%), fashion bags & accessories (9.0%) and furniture decor (7.3%) have the highest share of returning customers. Category rates are biased upward, so they're compared with each other, not with the overall rate. | Use these categories for first-purchase offers and follow-up emails, and test whether that raises repeat buying. |
 
 **Note:** these are insights from a public 2016-2018 dataset. They show strong associations, not proven causes, and the money estimates are illustrative.
+## AI Data Assistant (natural language → SQL)
+
+Ask a question in plain English and get the answer from the database, with the SQL and a plain-English explanation.
+
+![AI Assistant](docs/images/ai_assistant.png)
+
+**How it works:** the question and the table schema are sent to a Gemini model with business rules → the model writes a SQL query → the query is checked and run on PostgreSQL → the result is shown as a table and chart → the model explains the answer.
+
+**Safety (three layers):**
+- The model is instructed to write SELECT queries only.
+- `is_safe()` blocks any query that is not a SELECT.
+- Queries run as a read-only database user (`ai_reader`) with SELECT access to the clean schema only.
+
+**Business rules:** the first version counted freight as sales and gave a 2018 total of 8.64M instead of 7.39M. Adding business rules (sales = price only, currency R$, customers counted by `customer_unique_id`, partial years flagged, customer vs seller state) fixed this. The model also states any assumption it makes.
+
+**Testing:** 10 questions with known answers (`src/test_questions.py`). Score: **10/10**.
+
+**Run it:** `python -m streamlit run src/app.py`
 ## Data quality issues found
 - 8 orders marked "delivered" have no delivery date.
 - 775 orders have no items (mostly unavailable or canceled).
@@ -55,5 +73,5 @@ See `docs/data_quality_log.md` for details.
 - [x] Data quality log (`docs/data_quality_log.md`)
 - [x] SQL analysis: window functions and business insights (`sql/`)
 - [x] Star schema migrated to Google BigQuery
+- [x] AI assistant: natural language → SQL with safety rules, business rules and testing (10/10)
 - [ ] Lineage diagram
-- [ ] Natural language to SQL assistant
